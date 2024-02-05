@@ -1,0 +1,3993 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "description": "API for interacting with the SmartBuildings product.",
+    "version": "1.7.0",
+    "title": "ecobee SmartBuildings Public API",
+    "termsOfService": "https://sb.ecobee.com/terms-and-policies",
+    "contact": {
+      "name": "ecobee SmartBuildings",
+      "email": "smartbuildings-dev@ecobee.com",
+      "url": "https://sb.ecobee.com"
+    },
+    "license": {
+      "name": "ISC",
+      "url": "https://www.isc.org/licenses/"
+    }
+  },
+  "security": [
+    {
+      "smartbuildings_auth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "authentication",
+      "description": "authentication related items"
+    },
+    {
+      "name": "buildings",
+      "description": "building related items"
+    },
+    {
+      "name": "thermostats",
+      "description": "thermostat related items"
+    }
+  ],
+  "paths": {
+    "/api/v1/buildingIds": {
+      "get": {
+        "summary": "Get a list of all building IDs",
+        "description": "Retrieve a list of all building IDs available under the current scope.",
+        "tags": [
+          "buildings"
+        ],
+        "operationId": "getBuildingIds",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/listResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseFailResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        },
+        "security": [
+          {
+            "smartbuildings_auth": [
+              "read:buildings"
+            ]
+          }
+        ]
+      }
+    },
+    "/api/v1/buildings": {
+      "post": {
+        "summary": "Create a new building",
+        "description": "Create a new building",
+        "tags": [
+          "buildings"
+        ],
+        "operationId": "createBuilding",
+        "security": [
+          {
+            "smartbuildings_auth": [
+              "create:building",
+              "read:building"
+            ]
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "addressDetails": {
+                    "$ref": "#/components/schemas/addressDetails"
+                  },
+                  "name": {
+                    "description": "The display name for the building. Must be unique within the company.",
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 32,
+                    "pattern": "^[a-zA-Z0-9!\"#$%&'()*+,./:;<=>?@[\\] ^_`{|}~-]*$"
+                  },
+                  "size": {
+                    "$ref": "#/components/schemas/buildingSize"
+                  }
+                },
+                "required": [
+                  "addressDetails",
+                  "name",
+                  "size"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/building"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseFailResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseFailResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      }
+    },
+    "/api/v1/buildings/{buildingId}": {
+      "parameters": [
+        {
+          "name": "buildingId",
+          "in": "path",
+          "description": "ID of the building",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/objectId"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Get a summary of a building",
+        "description": "Get the details of a specific building",
+        "operationId": "getBuildingSummary",
+        "tags": [
+          "buildings"
+        ],
+        "security": [
+          {
+            "smartbuildings_auth": [
+              "read:building"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/building"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseFailResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a building",
+        "description": "Removes the building from SmartBuildings. All thermostats must be removed from the building before deleting.",
+        "operationId": "deleteBuilding",
+        "tags": [
+          "buildings"
+        ],
+        "security": [
+          {
+            "smartbuildings_auth": [
+              "delete:building",
+              "read:building"
+            ]
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseFailResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update building details",
+        "description": "Update the details of a specific building",
+        "operationId": "updateBuilding",
+        "tags": [
+          "buildings"
+        ],
+        "security": [
+          {
+            "smartbuildings_auth": [
+              "read:building",
+              "write:building"
+            ]
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "addressDetails": {
+                    "$ref": "#/components/schemas/addressDetails"
+                  },
+                  "name": {
+                    "$ref": "#/components/schemas/buildingName"
+                  },
+                  "size": {
+                    "$ref": "#/components/schemas/buildingSize"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/building"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseFailResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      }
+    },
+    "/api/v1/buildings/{buildingId}/thermostats": {
+      "parameters": [
+        {
+          "name": "buildingId",
+          "description": "The building ID for the associated thermostat(s)",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/objectId"
+          }
+        }
+      ],
+      "post": {
+        "summary": "Register a thermostat in SmartBuildings",
+        "description": "Registers a thermostat in SmartBuildings in a specific building",
+        "operationId": "registerThermostat",
+        "tags": [
+          "thermostats"
+        ],
+        "security": [
+          {
+            "smartbuildings_auth": [
+              "create:thermostat",
+              "read:thermostat"
+            ]
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "The unique identifier for a thermostat. ID will match the serial number on the physical thermostat.",
+                "properties": {
+                  "thermostatId": {
+                    "$ref": "#/components/schemas/thermostatId"
+                  }
+                },
+                "required": [
+                  "thermostatId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/thermostat"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseFailResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      },
+      "get": {
+        "summary": "Get a list of the thermostats in a building",
+        "description": "Returns list of thermostat IDs in a given building",
+        "operationId": "getThermostatIdsByBuilding",
+        "tags": [
+          "thermostats"
+        ],
+        "security": [
+          {
+            "smartbuildings_auth": [
+              "read:building",
+              "read:thermostats"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/listResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseFailResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      }
+    },
+    "/api/v1/thermostatIds": {
+      "parameters": [],
+      "get": {
+        "summary": "Get a list of all thermostat IDs",
+        "description": "Retrieve a list of all thermostat IDs available under the current scope.",
+        "operationId": "getThermostatIds",
+        "tags": [
+          "thermostats"
+        ],
+        "security": [
+          {
+            "smartbuildings_auth": [
+              "read:thermostats"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/listResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseFailResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      }
+    },
+    "/api/v1/thermostats/{thermostatId}": {
+      "parameters": [
+        {
+          "name": "thermostatId",
+          "in": "path",
+          "description": "The unique identifier for a thermostat. ID will match the serial number on the physical thermostat.",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/thermostatId"
+          }
+        }
+      ],
+      "delete": {
+        "summary": "Unregister a thermostat from SmartBuildings",
+        "description": "Unregisters a thermostat from SmartBuildings",
+        "operationId": "unregisterThermostat",
+        "tags": [
+          "thermostats"
+        ],
+        "security": [
+          {
+            "smartbuildings_auth": [
+              "delete:thermostat"
+            ]
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseFailResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      },
+      "get": {
+        "summary": "Get a summary of a thermostat",
+        "description": "Returns basic information about the thermostat",
+        "operationId": "getThermostatSummary",
+        "tags": [
+          "thermostats"
+        ],
+        "security": [
+          {
+            "smartbuildings_auth": [
+              "read:thermostat"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/thermostat"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseFailResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update base thermostat information",
+        "description": "Updates base thermostat information",
+        "operationId": "updateBaseThermostat",
+        "tags": [
+          "thermostats"
+        ],
+        "security": [
+          {
+            "smartbuildings_auth": [
+              "read:thermostat",
+              "write:thermostat"
+            ]
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/updateBaseThermostatRequestBody"
+              }
+            }
+          },
+          "description": "Properties to update on the thermostat",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/thermostat"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseFailResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      }
+    },
+    "/api/v1/thermostats/{thermostatId}/alerts": {
+      "parameters": [
+        {
+          "name": "thermostatId",
+          "in": "path",
+          "description": "The unique identifier for a thermostat. ID will match the serial number on the physical thermostat.",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/thermostatId"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Get current alerts on a thermostat",
+        "description": "Returns a list of all unacknowledged alerts on a thermostat",
+        "operationId": "getThermostatAlerts",
+        "tags": [
+          "thermostats"
+        ],
+        "security": [
+          {
+            "smartbuildings_auth": [
+              "read:thermostat"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/thermostatAlerts"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseFailResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      }
+    },
+    "/api/v1/thermostats/{thermostatId}/alertSettings": {
+      "parameters": [
+        {
+          "name": "thermostatId",
+          "in": "path",
+          "description": "The unique identifier for a thermostat. ID will match the serial number on the physical thermostat.",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/thermostatId"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Get current alerts and reminder settings on a thermostat",
+        "description": "Returns temperature and humidity alert settings and equipment reminder settings.",
+        "operationId": "getThermostatAlertSettings",
+        "tags": [
+          "thermostats"
+        ],
+        "security": [
+          {
+            "smartbuildings_auth": [
+              "read:thermostat"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/alertSettingsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseFailResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update alert and reminder settings on thermostat",
+        "description": "Updates alert and reminder settings on the thermostat.",
+        "operationId": "updateAlertSettings",
+        "tags": [
+          "thermostats"
+        ],
+        "security": [
+          {
+            "smartbuildings_auth": [
+              "write:thermostat"
+            ]
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/alertSettingsRequestBody"
+              }
+            }
+          },
+          "description": "Alert Settings",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/alertSettingsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseFailResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      }
+    },
+    "/api/v1/thermostats/{thermostatId}/fanHold": {
+      "parameters": [
+        {
+          "name": "thermostatId",
+          "in": "path",
+          "description": "The unique identifier for a thermostat. ID will match the serial number on the physical thermostat.",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/thermostatId"
+          }
+        }
+      ],
+      "post": {
+        "summary": "Set a fan hold on the thermostat",
+        "description": "Creates a fan-only hold on the thermostat",
+        "operationId": "setFanHold",
+        "tags": [
+          "thermostats"
+        ],
+        "security": [
+          {
+            "smartbuildings_auth": [
+              "write:thermostat"
+            ]
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/fanHoldRequestBody"
+              }
+            }
+          },
+          "description": "Authorization options",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/fanHoldResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseFailResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      }
+    },
+    "/api/v1/thermostats/{thermostatId}/hvacMode": {
+      "parameters": [
+        {
+          "name": "thermostatId",
+          "in": "path",
+          "description": "The unique identifier for a thermostat. ID will match the serial number on the physical thermostat.",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/thermostatId"
+          }
+        }
+      ],
+      "patch": {
+        "summary": "Set HVAC mode on thermostat",
+        "description": "Updates HVAC mode setting on the thermostat. The thermostat must have equipment to support the requested HVAC mode, otherwise the update will fail.",
+        "operationId": "setHvacMode",
+        "tags": [
+          "thermostats"
+        ],
+        "security": [
+          {
+            "smartbuildings_auth": [
+              "write:thermostat"
+            ]
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/hvacModeRequestBody"
+              }
+            }
+          },
+          "description": "HVAC Mode",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/hvacModeResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseFailResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      }
+    },
+    "/api/v1/thermostats/{thermostatId}/resumeSchedule": {
+      "parameters": [
+        {
+          "name": "thermostatId",
+          "in": "path",
+          "description": "The unique identifier for a thermostat. ID will match the serial number on the physical thermostat.",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/thermostatId"
+          }
+        }
+      ],
+      "post": {
+        "summary": "Resume the thermostat schedule.",
+        "description": "Cancels any manual holds on a thermostat and resumes the regular schedule.",
+        "operationId": "resumeSchedule",
+        "tags": [
+          "thermostats"
+        ],
+        "security": [
+          {
+            "smartbuildings_auth": [
+              "write:thermostat"
+            ]
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseFailResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      }
+    },
+    "/api/v1/thermostats/{thermostatId}/tenantMode": {
+      "parameters": [
+        {
+          "name": "thermostatId",
+          "in": "path",
+          "description": "The unique identifier for a thermostat. ID will match the serial number on the physical thermostat.",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/thermostatId"
+          }
+        }
+      ],
+      "patch": {
+        "summary": "Set or unset tenant mode on a thermostat",
+        "description": "Will turn tenant mode on or off on a thermostat.  For more information about tenant mode, please see https://docs.sb.ecobee.com/docs/tenant-mode",
+        "operationId": "setTenantMode",
+        "tags": [
+          "thermostats"
+        ],
+        "security": [
+          {
+            "smartbuildings_auth": [
+              "write:tenantmode"
+            ]
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/tenantModeRequestBody"
+              }
+            }
+          },
+          "description": "Authorization options",
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseFailResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      }
+    },
+    "/api/v1/thermostats/{thermostatId}/events": {
+      "parameters": [
+        {
+          "name": "thermostatId",
+          "in": "path",
+          "description": "The unique identifier for a thermostat. ID will match the serial number on the physical thermostat.",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/thermostatId"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Get current events on a thermostat",
+        "description": "Returns the current event on the thermostat and any other future holds",
+        "operationId": "getThermostatEvents",
+        "tags": [
+          "thermostats"
+        ],
+        "security": [
+          {
+            "smartbuildings_auth": [
+              "read:thermostat"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/thermostatEvents"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseFailResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      }
+    },
+    "/api/v1/thermostats/{thermostatId}/sensors": {
+      "parameters": [
+        {
+          "name": "thermostatId",
+          "in": "path",
+          "description": "The unique identifier for a thermostat. ID will match the serial number on the physical thermostat.",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/thermostatId"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Get current status of all sensors connected to a thermostat",
+        "description": "Returns a list with sensor data for all sensors on a thermostat",
+        "operationId": "getThermostatSensors",
+        "tags": [
+          "thermostats"
+        ],
+        "security": [
+          {
+            "smartbuildings_auth": [
+              "read:thermostat"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/thermostatSensors"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseFailResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      }
+    },
+    "/api/v1/thermostats/{thermostatId}/weather": {
+      "parameters": [
+        {
+          "name": "thermostatId",
+          "in": "path",
+          "description": "The unique identifier for a thermostat. ID will match the serial number on the physical thermostat.",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/thermostatId"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Get weather forecast for a thermostat's region",
+        "description": "Returns a list with weather forecast information for the thermostat",
+        "operationId": "getThermostatWeatherForecast",
+        "tags": [
+          "thermostats"
+        ],
+        "security": [
+          {
+            "smartbuildings_auth": [
+              "read:thermostat"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/thermostatWeatherForecast"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseFailResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      }
+    },
+    "/api/v1/thermostats/{thermostatId}/status": {
+      "parameters": [
+        {
+          "name": "thermostatId",
+          "in": "path",
+          "description": "The unique identifier for a thermostat. ID will match the serial number on the physical thermostat.",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/thermostatId"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Get current status of a thermostat",
+        "description": "Returns dynamic thermostat state data",
+        "operationId": "getThermostatStatus",
+        "tags": [
+          "thermostats"
+        ],
+        "security": [
+          {
+            "smartbuildings_auth": [
+              "read:thermostat"
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/thermostatStatus"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseFailResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      }
+    },
+    "/api/v1/thermostats/{thermostatId}/coolHold": {
+      "parameters": [
+        {
+          "name": "thermostatId",
+          "in": "path",
+          "description": "The unique identifier for a thermostat. ID will match the serial number on the physical thermostat.",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/thermostatId"
+          }
+        }
+      ],
+      "post": {
+        "summary": "Set a cool hold on the thermostat",
+        "tags": [
+          "thermostats"
+        ],
+        "operationId": "setCoolHold",
+        "description": "Create a cool hold on a thermostat based on a provided desired temperature. Used when thermostat HVAC mode is set to \"cool\" or \"auto\".",
+        "security": [
+          {
+            "smartbuildings_auth": [
+              "write:thermostat"
+            ]
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/temperatureHoldRequestBody"
+              }
+            }
+          },
+          "description": "Authorization options",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/temperatureHoldResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseFailResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      }
+    },
+    "/api/v1/thermostats/{thermostatId}/heatHold": {
+      "parameters": [
+        {
+          "name": "thermostatId",
+          "in": "path",
+          "description": "The unique identifier for a thermostat. ID will match the serial number on the physical thermostat.",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/schemas/thermostatId"
+          }
+        }
+      ],
+      "post": {
+        "summary": "Set a heat hold on the thermostat",
+        "tags": [
+          "thermostats"
+        ],
+        "operationId": "setHeatHold",
+        "description": "Create a heat hold on a thermostat based on a provided desired temperature. Used when thermostat HVAC mode is set to \"heat\", \"auxHeatOnly\", or \"auto\".",
+        "security": [
+          {
+            "smartbuildings_auth": [
+              "write:thermostat"
+            ]
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/temperatureHoldRequestBody"
+              }
+            }
+          },
+          "description": "Authorization options",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/temperatureHoldResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseFailResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/baseErrorResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        }
+      }
+    },
+    "/token": {
+      "post": {
+        "summary": "Get a jwt token",
+        "description": "JWT used to make all authenticated requests on behalf of a SmartBuildings account",
+        "operationId": "getToken",
+        "tags": [
+          "authentication"
+        ],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/authResponseBody"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "examples": {
+                  "400": {
+                    "value": {
+                      "error": "invalid_request",
+                      "error_description": "Missing required parameter: grant_type"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not Authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "examples": {
+                  "401": {
+                    "value": {
+                      "error": "access_denied",
+                      "error_description": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not Authorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "examples": {
+                  "403": {
+                    "value": {
+                      "error": "access_denied",
+                      "error_description": "Unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          },
+          "default": {
+            "description": "Unexpected error"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/authRequestBody"
+              }
+            }
+          },
+          "description": "Authorization options",
+          "required": true
+        }
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "Online Documentation",
+    "url": "https://docs.sb.ecobee.com/"
+  },
+  "components": {
+    "securitySchemes": {
+      "smartbuildings_auth": {
+        "type": "oauth2",
+        "flows": {
+          "clientCredentials": {
+            "tokenUrl": "https://api.sb.ecobee.com/token",
+            "scopes": {
+              "create:building": "Create a new building",
+              "create:thermostat": "Register a new thermostat",
+              "delete:building": "Deletes a building",
+              "delete:thermostat": "Unregister a thermostat",
+              "read:building": "Read settings of a building",
+              "read:buildings": "Read a list of buildings",
+              "read:thermostat": "Read settings/status of a thermostat",
+              "read:thermostats": "Read a list of thermostats",
+              "write:building": "Update settings on a building",
+              "write:tenantmode": "Ability to put a thermostat in and out of tenant mode",
+              "write:thermostat": "Update settings on a thermostat"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "addressDetails": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "description": "The building's street address",
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 100,
+            "default": ""
+          },
+          "city": {
+            "description": "City where the building is located",
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 100,
+            "default": ""
+          },
+          "country": {
+            "description": "This should be the ISO 3166-1 alpha-2 country code. It must be uppercase.",
+            "type": "string",
+            "format": "^[A-Z]{2}$",
+            "example": "US",
+            "minLength": 2,
+            "maxLength": 2,
+            "default": ""
+          },
+          "latitude": {
+            "description": "Latitude coordinate for the building",
+            "type": "number",
+            "format": "float",
+            "multipleOf": 1e-8,
+            "maximum": 90,
+            "minimum": -90
+          },
+          "longitude": {
+            "description": "Longitude coordinate for the building",
+            "type": "number",
+            "format": "float",
+            "multipleOf": 1e-8,
+            "maximum": 180,
+            "minimum": -180
+          },
+          "postalCode": {
+            "description": "Postal information for the building",
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 100,
+            "pattern": "[A-Za-z]\\d[A-Za-z] ?\\d[A-Za-z]\\d$|^\\d{5}(?:[-\\s]\\d{4})?$"
+          },
+          "state": {
+            "description": "The state or province where the building is located. We recommend the 2 character short form for this field, eg, CA or NY, when possible to be consistent with the SmartBuildings application format.",
+            "type": "string",
+            "example": "CA",
+            "minLength": 0,
+            "maxLength": 30,
+            "default": ""
+          },
+          "timeZone": {
+            "description": "The time zone where the building is located. This should be the tz/zoneinfo string as defined in the IANA time zone database. See https://www.iana.org/time-zones or https://en.wikipedia.org/wiki/List_of_tz_database_time_zones.",
+            "example": "America/New_York",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          }
+        },
+        "required": [
+          "address",
+          "city",
+          "country",
+          "latitude",
+          "longitude",
+          "postalCode",
+          "state",
+          "timeZone"
+        ]
+      },
+      "alert": {
+        "type": "object",
+        "properties": {
+          "acknowledgeRef": {
+            "type": "string",
+            "description": "The unique alert identifier, required to acknowledge an alert"
+          },
+          "alertNumber": {
+            "type": "integer",
+            "format": "uint32",
+            "minimum": 0,
+            "description": "The ecobee alert message identifier"
+          },
+          "alertType": {
+            "type": "string",
+            "enum": [
+              "alert",
+              "demandResponse",
+              "emergency",
+              "message",
+              "pricing"
+            ],
+            "description": "The type of alert this is: alert, demandResponse, emergency, message, pricing"
+          },
+          "notificationType": {
+            "type": "string",
+            "enum": [
+              "alert",
+              "hvac",
+              "furnaceFilter",
+              "humidifierFilter",
+              "dehumidifierFilter",
+              "ventilator",
+              "ac",
+              "airFilter",
+              "airCleaner",
+              "uvLamp",
+              "temp",
+              "lowTemp",
+              "highTemp",
+              "lowHumidity",
+              "highHumidity",
+              "auxHeat",
+              "auxOutdoor"
+            ],
+            "description": "The type of alert or reminder: alert, hvac, furnaceFilter, humidifierFilter, dehumidifierFilter, ventilator, ac, airFilter, airCleaner, uvLamp, temp, lowTemp, highTemp, lowHumidity, highHumidity, auxHeat, auxOutdoor"
+          },
+          "reminder": {
+            "type": "string",
+            "format": "date",
+            "description": "Reminder date"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ],
+            "description": "The alert severity: low, medium, high"
+          },
+          "text": {
+            "type": "string",
+            "maxLength": 500,
+            "description": "The alert message text, truncated to 500 characters"
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The alert time and date"
+          }
+        }
+      },
+      "authRequestBody": {
+        "type": "object",
+        "required": [
+          "audience",
+          "client_id",
+          "client_secret",
+          "grant_type"
+        ],
+        "properties": {
+          "audience": {
+            "type": "string",
+            "enum": [
+              "https://api.sb.ecobee.com"
+            ]
+          },
+          "client_id": {
+            "type": "string"
+          },
+          "client_secret": {
+            "type": "string",
+            "format": "password"
+          },
+          "grant_type": {
+            "type": "string",
+            "enum": [
+              "client_credentials"
+            ]
+          },
+          "scope": {
+            "type": "string",
+            "description": "An optional list of scopes, used to check if the client has been granted permissions to.",
+            "example": "read:thermostat read:thermostats",
+            "pattern": "^(?:(?:read|write):[a-z]+)?(?: (?:(?:read|write):[a-z]+))*$"
+          }
+        }
+      },
+      "authResponseBody": {
+        "type": "object",
+        "properties": {
+          "access_token": {
+            "type": "string"
+          },
+          "token_type": {
+            "type": "string",
+            "enum": [
+              "Bearer"
+            ]
+          },
+          "expires_in": {
+            "type": "integer"
+          },
+          "scope": {
+            "type": "string"
+          }
+        }
+      },
+      "baseFailResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "fail"
+            ]
+          },
+          "data": {
+            "type": "object"
+          }
+        }
+      },
+      "baseErrorResponse": {
+        "type": "object",
+        "required": [
+          "status",
+          "message"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "error"
+            ]
+          },
+          "message": {
+            "type": "object"
+          },
+          "code": {
+            "type": "integer"
+          },
+          "data": {
+            "type": "object"
+          }
+        }
+      },
+      "baseHoldType": {
+        "type": "string",
+        "enum": [
+          "indefinite",
+          "nextTransition"
+        ],
+        "description": "An 'indefinite' hold indicates that the hold will continue until cancelled. A 'nextTransition' hold indicates that the hold will continue only until the next climate change on the thermostat schedule, eg, when the thermostat switches from 'away' to 'home'"
+      },
+      "baseSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "success"
+            ]
+          }
+        }
+      },
+      "building": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "success"
+            ]
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "address": {
+                "description": "The building's street address",
+                "type": "string",
+                "minLength": 0,
+                "maxLength": 100,
+                "default": ""
+              },
+              "city": {
+                "description": "City where the building is located",
+                "type": "string",
+                "minLength": 0,
+                "maxLength": 100,
+                "default": ""
+              },
+              "country": {
+                "description": "This should be the ISO 3166-1 alpha-2 country code. It must be uppercase.",
+                "type": "string",
+                "format": "^[A-Z]{2}$",
+                "example": "US",
+                "minLength": 2,
+                "maxLength": 2,
+                "default": ""
+              },
+              "latitude": {
+                "description": "Latitude coordinate for the building",
+                "type": "number",
+                "format": "float",
+                "multipleOf": 1e-8,
+                "maximum": 90,
+                "minimum": -90
+              },
+              "longitude": {
+                "description": "Longitude coordinate for the building",
+                "type": "number",
+                "format": "float",
+                "multipleOf": 1e-8,
+                "maximum": 180,
+                "minimum": -180
+              },
+              "postalCode": {
+                "description": "Postal information for the building",
+                "type": "string",
+                "minLength": 0,
+                "maxLength": 100,
+                "pattern": "[A-Za-z]\\d[A-Za-z] ?\\d[A-Za-z]\\d$|^\\d{5}(?:[-\\s]\\d{4})?$"
+              },
+              "state": {
+                "description": "The state or province where the building is located. We recommend the 2 character short form for this field, eg, CA or NY, when possible to be consistent with the SmartBuildings application format.",
+                "type": "string",
+                "example": "CA",
+                "minLength": 0,
+                "maxLength": 30,
+                "default": ""
+              },
+              "timeZone": {
+                "description": "The time zone where the building is located. This should be the tz/zoneinfo string as defined in the IANA time zone database. See https://www.iana.org/time-zones or https://en.wikipedia.org/wiki/List_of_tz_database_time_zones.",
+                "example": "America/New_York",
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100
+              },
+              "id": {
+                "$ref": "#/components/schemas/objectId"
+              },
+              "name": {
+                "$ref": "#/components/schemas/buildingName"
+              },
+              "size": {
+                "$ref": "#/components/schemas/buildingSize"
+              }
+            },
+            "required": [
+              "address",
+              "city",
+              "country",
+              "latitude",
+              "longitude",
+              "postalCode",
+              "state",
+              "timeZone"
+            ]
+          }
+        }
+      },
+      "buildingName": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 32,
+        "pattern": "^[a-zA-Z0-9!\"#$%&'()*+,./:;<=>?@[\\] ^_`{|}~-]*$"
+      },
+      "buildingSize": {
+        "type": "integer",
+        "enum": [
+          0,
+          1,
+          5000,
+          10000,
+          20000
+        ],
+        "description": "The values for building size are square foot ranges where 1 = 1-4999, 5000 = 5000-9999, 10000 = 10000-19999, 20000 = 20000+, 0 = unknown"
+      },
+      "desiredTemperature": {
+        "type": "number",
+        "format": "float",
+        "multipleOf": 0.01,
+        "minimum": -10,
+        "maximum": 120
+      },
+      "fanHoldStatus": {
+        "type": "string",
+        "enum": [
+          "on",
+          "auto"
+        ]
+      },
+      "fanHoldRequestBody": {
+        "type": "object",
+        "required": [
+          "fan",
+          "type"
+        ],
+        "properties": {
+          "fan": {
+            "$ref": "#/components/schemas/fanHoldStatus"
+          },
+          "type": {
+            "$ref": "#/components/schemas/baseHoldType"
+          }
+        }
+      },
+      "fanHoldResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "success"
+            ]
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "fan": {
+                "$ref": "#/components/schemas/fanHoldStatus"
+              },
+              "type": {
+                "$ref": "#/components/schemas/baseHoldType"
+              }
+            }
+          }
+        }
+      },
+      "hold": {
+        "type": "object",
+        "properties": {
+          "coolHoldTemperature": {
+            "$ref": "#/components/schemas/temperature"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "fan": {
+            "type": "string"
+          },
+          "fanMinimumOnTime": {
+            "type": "integer",
+            "format": "uint32",
+            "description": "Minimum time for a fan to run in minutes",
+            "default": 0,
+            "minimum": 0,
+            "maximum": 55
+          },
+          "heatHoldTemperature": {
+            "$ref": "#/components/schemas/temperature"
+          },
+          "name": {
+            "type": "string"
+          },
+          "isRunning": {
+            "type": "boolean"
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "alertSettingsRequestBody": {
+        "type": "object",
+        "properties": {
+          "lowTemperatureAlert": {
+            "type": "object",
+            "properties": {
+              "enabled": {
+                "type": "boolean"
+              },
+              "value": {
+                "type": "number",
+                "minimum": -10,
+                "maximum": 120
+              }
+            },
+            "description": "High and low temperature alert values must be separated by the heatCoolMinDelta found in the thermostat status"
+          },
+          "highTemperatureAlert": {
+            "type": "object",
+            "properties": {
+              "enabled": {
+                "type": "boolean"
+              },
+              "value": {
+                "type": "number",
+                "minimum": -10,
+                "maximum": 120
+              }
+            },
+            "description": "High and low temperature alert values must be separated by the heatCoolMinDelta found in the thermostat status"
+          },
+          "lowHumidityAlert": {
+            "type": "object",
+            "properties": {
+              "enabled": {
+                "type": "boolean"
+              },
+              "value": {
+                "type": "number",
+                "minimum": 1,
+                "maximum": 95
+              }
+            },
+            "description": "High and low humidity alert values must be separated by 5%"
+          },
+          "highHumidityAlert": {
+            "type": "object",
+            "properties": {
+              "enabled": {
+                "type": "boolean"
+              },
+              "value": {
+                "type": "number",
+                "minimum": 6,
+                "maximum": 100
+              }
+            },
+            "description": "High and low humidity alert values must be separated by 5%"
+          },
+          "acMaintenanceReminder": {
+            "$ref": "#/components/schemas/reminderSchema"
+          },
+          "hvacMaintenanceReminder": {
+            "$ref": "#/components/schemas/reminderSchema"
+          }
+        }
+      },
+      "temperatureAlertSchema": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "value": {
+            "type": "number",
+            "minimum": -10,
+            "maximum": 120
+          }
+        }
+      },
+      "lowHumidityAlertSchema": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "value": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 95
+          }
+        }
+      },
+      "highHumidityAlertSchema": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "value": {
+            "type": "number",
+            "minimum": 6,
+            "maximum": 100
+          }
+        }
+      },
+      "reminderSchema": {
+        "type": "object",
+        "properties": {
+          "lastMaintenanceDate": {
+            "type": "string",
+            "example": "2021-02-19"
+          },
+          "maintenanceInterval": {
+            "type": "number"
+          },
+          "maintenanceIntervalUnits": {
+            "type": "string",
+            "enum": [
+              "month",
+              "hour"
+            ]
+          },
+          "enabled": {
+            "type": "boolean"
+          }
+        }
+      },
+      "nextReminderDate": {
+        "type": "string",
+        "example": "2021-02-19"
+      },
+      "alertSettingsResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "success"
+            ]
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "$ref": "#/components/schemas/thermostatId"
+              },
+              "lowTemperatureAlert": {
+                "$ref": "#/components/schemas/temperatureAlertSchema"
+              },
+              "highTemperatureAlert": {
+                "$ref": "#/components/schemas/temperatureAlertSchema"
+              },
+              "lowHumidityAlert": {
+                "$ref": "#/components/schemas/lowHumidityAlertSchema"
+              },
+              "highHumidityAlert": {
+                "$ref": "#/components/schemas/highHumidityAlertSchema"
+              },
+              "acMaintenanceReminder": {
+                "type": "object",
+                "properties": {
+                  "lastMaintenanceDate": {
+                    "type": "string",
+                    "example": "2021-02-19"
+                  },
+                  "maintenanceInterval": {
+                    "type": "number"
+                  },
+                  "maintenanceIntervalUnits": {
+                    "type": "string",
+                    "enum": [
+                      "month",
+                      "hour"
+                    ]
+                  },
+                  "enabled": {
+                    "type": "boolean"
+                  },
+                  "nextReminderDate": {
+                    "$ref": "#/components/schemas/nextReminderDate"
+                  }
+                }
+              },
+              "hvacMaintenanceReminder": {
+                "type": "object",
+                "properties": {
+                  "lastMaintenanceDate": {
+                    "type": "string",
+                    "example": "2021-02-19"
+                  },
+                  "maintenanceInterval": {
+                    "type": "number"
+                  },
+                  "maintenanceIntervalUnits": {
+                    "type": "string",
+                    "enum": [
+                      "month",
+                      "hour"
+                    ]
+                  },
+                  "enabled": {
+                    "type": "boolean"
+                  },
+                  "nextReminderDate": {
+                    "$ref": "#/components/schemas/nextReminderDate"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "hvacModeRequestBody": {
+        "type": "object",
+        "required": [
+          "hvacMode"
+        ],
+        "properties": {
+          "hvacMode": {
+            "$ref": "#/components/schemas/hvacMode"
+          }
+        }
+      },
+      "hvacModeResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "success"
+            ]
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "hvacMode": {
+                "$ref": "#/components/schemas/hvacMode"
+              }
+            }
+          }
+        }
+      },
+      "hvacMode": {
+        "type": "string",
+        "enum": [
+          "heat",
+          "cool",
+          "auto",
+          "off",
+          "auxHeatOnly"
+        ],
+        "description": "The HVAC mode on a thermostat. Possible values: auto, auxHeatOnly, cool, heat, off."
+      },
+      "listItem": {
+        "type": "object",
+        "properties": {
+          "contentLocation": {
+            "type": "string",
+            "format": "uri",
+            "description": "URI for retrieving the full resource object"
+          },
+          "id": {
+            "$ref": "#/components/schemas/objectId"
+          }
+        }
+      },
+      "listResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "success"
+            ]
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "count": {
+                "type": "integer",
+                "format": "uint32",
+                "minimum": 0,
+                "maximum": 10000
+              },
+              "items": {
+                "type": "array",
+                "minItems": 0,
+                "maxItems": 10000,
+                "items": {
+                  "$ref": "#/components/schemas/listItem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "objectId": {
+        "type": "string",
+        "minLength": 24,
+        "maxLength": 24,
+        "pattern": "^[a-f0-9]*$"
+      },
+      "percent": {
+        "type": "integer",
+        "format": "uint32",
+        "minimum": 0,
+        "maximum": 100
+      },
+      "sensor": {
+        "type": "object",
+        "properties": {
+          "capability": {
+            "type": "array",
+            "minItems": 0,
+            "maxItems": 1000,
+            "items": {
+              "$ref": "#/components/schemas/sensorCapability"
+            }
+          },
+          "code": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "isInUse": {
+            "type": "boolean"
+          },
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "sensorCapability": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        }
+      },
+      "setPoint": {
+        "type": "object",
+        "properties": {
+          "desiredCool": {
+            "$ref": "#/components/schemas/temperature"
+          },
+          "desiredHeat": {
+            "$ref": "#/components/schemas/temperature"
+          }
+        }
+      },
+      "temperatureHoldRequestBody": {
+        "type": "object",
+        "required": [
+          "desiredTemperature",
+          "type"
+        ],
+        "properties": {
+          "desiredTemperature": {
+            "$ref": "#/components/schemas/desiredTemperature"
+          },
+          "type": {
+            "$ref": "#/components/schemas/baseHoldType"
+          }
+        }
+      },
+      "temperatureHoldResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "success"
+            ]
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "desiredTemperature": {
+                "$ref": "#/components/schemas/desiredTemperature"
+              },
+              "type": {
+                "$ref": "#/components/schemas/baseHoldType"
+              }
+            }
+          }
+        }
+      },
+      "temperature": {
+        "type": "number",
+        "format": "float",
+        "multipleOf": 0.01,
+        "minimum": -459.67,
+        "maximum": 500
+      },
+      "tenantModeRequestBody": {
+        "type": "object",
+        "required": [
+          "isTenantMode"
+        ],
+        "properties": {
+          "isTenantMode": {
+            "type": "boolean"
+          }
+        }
+      },
+      "thermostat": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "success"
+            ]
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "buildingId": {
+                "$ref": "#/components/schemas/objectId"
+              },
+              "id": {
+                "$ref": "#/components/schemas/thermostatId"
+              },
+              "name": {
+                "description": "The name shown in the SmartBuildings web portal or mobile application. This can be set to a different value than what is shown on the thermostat as desired.",
+                "type": "string",
+                "minLength": 0,
+                "maxLength": 64,
+                "pattern": "^[a-z0-9!\"#$%&'()*+,./:;<=>?@[\\] ^_`{|}~-]*$"
+              },
+              "thermostatName": {
+                "description": "The name shown on the physical thermostat. This can be set to a different value than what is shown in the SmartBuildings web portal or mobile application as desired.",
+                "type": "string",
+                "minLength": 0,
+                "maxLength": 64,
+                "pattern": "^[a-z0-9!\"#$%&'()*+,./:;<=>?@[\\] ^_`{|}~-]*$"
+              },
+              "timeZoneOffsetMinutes": {
+                "type": "integer",
+                "format": "int32",
+                "multipleOf": 5,
+                "description": "Offset in minutes from GMT",
+                "minimum": -780,
+                "maximum": 900
+              },
+              "hvacModes": {
+                "type": "array",
+                "uniqueItems": true,
+                "minItems": 1,
+                "items": {
+                  "$ref": "#/components/schemas/hvacMode"
+                }
+              }
+            }
+          }
+        }
+      },
+      "thermostatAlerts": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "success"
+            ]
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "$ref": "#/components/schemas/thermostatId"
+              },
+              "items": {
+                "type": "array",
+                "minItems": 0,
+                "maxItems": 1000,
+                "items": {
+                  "$ref": "#/components/schemas/alert"
+                }
+              }
+            }
+          }
+        }
+      },
+      "thermostatEvents": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "success"
+            ]
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "$ref": "#/components/schemas/thermostatId"
+              },
+              "currentEvent": {
+                "$ref": "#/components/schemas/hold"
+              },
+              "holds": {
+                "type": "array",
+                "minItems": 0,
+                "maxItems": 1000,
+                "items": {
+                  "$ref": "#/components/schemas/hold"
+                }
+              }
+            }
+          }
+        }
+      },
+      "thermostatId": {
+        "type": "string",
+        "description": "The unique identifier for a thermostat. The ID will match the serial number on the physical thermostat.",
+        "minLength": 1,
+        "pattern": "^\\d+$"
+      },
+      "thermostatSensors": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "success"
+            ]
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "$ref": "#/components/schemas/thermostatId"
+              },
+              "items": {
+                "type": "array",
+                "minItems": 0,
+                "maxItems": 32,
+                "items": {
+                  "$ref": "#/components/schemas/sensor"
+                }
+              }
+            }
+          }
+        }
+      },
+      "thermostatStatus": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "success"
+            ]
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "comfortSetting": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 12,
+                "example": "Home",
+                "pattern": "^(?:Home|Away|Occupied|Unoccupied|\\w{1,12})$"
+              },
+              "desiredCoolRange": {
+                "type": "object",
+                "description": "The minimum and maximum values for a cool setPoint",
+                "properties": {
+                  "min": {
+                    "$ref": "#/components/schemas/temperature"
+                  },
+                  "max": {
+                    "$ref": "#/components/schemas/temperature"
+                  }
+                }
+              },
+              "desiredDehumidity": {
+                "description": "The maximum humidity value to be maintained",
+                "type": "integer",
+                "format": "uint32",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "desiredHeatRange": {
+                "type": "object",
+                "description": "The minimum and maximum values for a heat setPoint",
+                "properties": {
+                  "min": {
+                    "$ref": "#/components/schemas/temperature"
+                  },
+                  "max": {
+                    "$ref": "#/components/schemas/temperature"
+                  }
+                }
+              },
+              "desiredHumidity": {
+                "description": "The minimum humidity value to be maintained",
+                "type": "integer",
+                "format": "uint32",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "heatCoolMinDelta": {
+                "type": "integer",
+                "format": "uint32",
+                "minimum": 5,
+                "description": "The minimum difference between setPoints"
+              },
+              "humidity": {
+                "$ref": "#/components/schemas/percent"
+              },
+              "hvacMode": {
+                "$ref": "#/components/schemas/hvacMode"
+              },
+              "id": {
+                "$ref": "#/components/schemas/thermostatId"
+              },
+              "isConnected": {
+                "type": "boolean"
+              },
+              "isTenantMode": {
+                "type": "boolean",
+                "description": "Indicates whether the thermostat is currently in tenant mode"
+              },
+              "runningEquipment": {
+                "type": "object",
+                "description": "A record of running equipment indicated by a boolean flag",
+                "properties": {
+                  "fan": {
+                    "type": "boolean"
+                  },
+                  "compCool1": {
+                    "type": "boolean"
+                  },
+                  "compCool2": {
+                    "type": "boolean"
+                  },
+                  "heatPump": {
+                    "type": "boolean"
+                  },
+                  "heatPump2": {
+                    "type": "boolean"
+                  },
+                  "heatPump3": {
+                    "type": "boolean"
+                  },
+                  "auxHeat1": {
+                    "type": "boolean"
+                  },
+                  "auxHeat2": {
+                    "type": "boolean"
+                  },
+                  "auxHeat3": {
+                    "type": "boolean"
+                  },
+                  "compHotWater": {
+                    "type": "boolean"
+                  },
+                  "auxHotWater": {
+                    "type": "boolean"
+                  },
+                  "humidifier": {
+                    "type": "boolean"
+                  },
+                  "dehumidifier": {
+                    "type": "boolean"
+                  },
+                  "ventilator": {
+                    "type": "boolean"
+                  },
+                  "economizer": {
+                    "type": "boolean"
+                  }
+                }
+              },
+              "setPoint": {
+                "$ref": "#/components/schemas/setPoint"
+              },
+              "temperature": {
+                "$ref": "#/components/schemas/temperature"
+              }
+            }
+          }
+        }
+      },
+      "thermostatWeatherForecast": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "success"
+            ]
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "$ref": "#/components/schemas/thermostatId"
+              },
+              "items": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/weather"
+                }
+              }
+            }
+          }
+        }
+      },
+      "updateBaseThermostatRequestBody": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "The name shown in the SmartBuildings web portal or mobile application. This can be set to a different value than what is shown on the thermostat as desired.",
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 64,
+            "pattern": "^[a-z0-9!\"#$%&'()*+,./:;<=>?@[\\] ^_`{|}~-]*$"
+          },
+          "thermostatName": {
+            "description": "The name shown on the physical thermostat. This can be set to a different value than what is shown in the SmartBuildings web portal or mobile application as desired.",
+            "type": "string",
+            "minLength": 0,
+            "maxLength": 64,
+            "pattern": "^[a-z0-9!\"#$%&'()*+,./:;<=>?@[\\] ^_`{|}~-]*$"
+          }
+        }
+      },
+      "weather": {
+        "type": "object",
+        "properties": {
+          "condition": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "dewPoint": {
+            "$ref": "#/components/schemas/temperature"
+          },
+          "pressure": {
+            "type": "number",
+            "description": "Barometric pressure"
+          },
+          "probabilityOfPrecipitation": {
+            "$ref": "#/components/schemas/percent"
+          },
+          "relativeHumidity": {
+            "$ref": "#/components/schemas/percent"
+          },
+          "sky": {
+            "type": "string",
+            "description": "Description of the cloud cover condition",
+            "enum": [
+              "A MIXTURE OF SUN AND CLOUDS",
+              "AFTERNOON CLOUDS",
+              "BREAKS OF SUN LATE",
+              "BROKEN CLOUDS",
+              "CLEAR",
+              "CLEARING SKIES",
+              "CLOUDY",
+              "DECREASING CLOUDINESS",
+              "DENSE FOG",
+              "DUSTSTORM",
+              "EARLY FOG FOLLOWED BY SUNNY SKIES",
+              "FOG",
+              "HAZE",
+              "HAZY SUNSHINE",
+              "HIGH LEVEL CLOUDS",
+              "ICE FOG",
+              "INCREASING CLOUDINESS",
+              "LIGHT FOG",
+              "LOW CLOUDS",
+              "LOW LEVEL HAZE",
+              "MORE CLOUDS THAN SUN",
+              "MORE SUN THAN CLOUDS",
+              "MORNING CLOUDS",
+              "MOSTLY CLEAR",
+              "MOSTLY CLOUDY",
+              "MOSTLY SUNNY",
+              "OVERCAST",
+              "PARTLY CLOUDY",
+              "PARTLY SUNNY",
+              "PASSING CLOUDS",
+              "SANDSTORM",
+              "SCATTERED CLOUDS",
+              "SMOKE",
+              "SUNNY",
+              "UNKNOWN"
+            ]
+          },
+          "temperature": {
+            "$ref": "#/components/schemas/temperature"
+          },
+          "temperatureHigh": {
+            "$ref": "#/components/schemas/temperature"
+          },
+          "temperatureLow": {
+            "$ref": "#/components/schemas/temperature"
+          },
+          "windBearing": {
+            "type": "integer",
+            "description": "The wind bearing in degrees",
+            "maximum": 360,
+            "minimum": 0
+          },
+          "windDirection": {
+            "type": "string",
+            "description": "The cardinal direction of the wind",
+            "example": "NW"
+          },
+          "windSpeed": {
+            "type": "integer",
+            "description": "Wind speed in miles per hour"
+          }
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.sb.ecobee.com"
+    }
+  ]
+}
